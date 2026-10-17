@@ -12,8 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.buttonbox.ui.theme.ButtonBoxTheme
+import org.billthefarmer.mididriver.MidiDriver
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,6 +28,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onMidiStart() {
+//        for (i in 0..MainActivity.buttons.size) writeChange(MainActivity.change + i, instrument) // Set instrument
     }
 }
 
