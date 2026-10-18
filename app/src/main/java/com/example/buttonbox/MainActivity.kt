@@ -1,5 +1,6 @@
 package com.example.buttonbox
 
+import android.hardware.input.InputManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.buttonbox.ui.theme.ButtonBoxTheme
 import org.billthefarmer.mididriver.MidiDriver
 
-class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener {
+class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener, InputManager.InputDeviceListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,6 +33,18 @@ class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener {
 
     override fun onMidiStart() {
 //        for (i in 0..MainActivity.buttons.size) writeChange(MainActivity.change + i, instrument) // Set instrument
+    }
+
+    override fun onInputDeviceAdded(deviceId: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInputDeviceChanged(deviceId: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInputDeviceRemoved(deviceId: Int) {
+        TODO("Not yet implemented")
     }
 }
 
