@@ -1,3 +1,9 @@
+import java.nio.file.Files
+import java.net.URI
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import kotlin.io.path.exists
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -36,6 +42,16 @@ android {
     }
 }
 
+fun urlFile(url: String, name: String): String {
+    val path = Paths.get("${layout.buildDirectory.get()}/download/${name}")
+    println(path)
+    Files.createDirectories(path.parent)
+    if (!path.exists()) {
+        Files.copy(URI(url).toURL().openStream(), path, StandardCopyOption.REPLACE_EXISTING)
+    }
+    return path.toString()
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
@@ -52,5 +68,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation("com.github.billthefarmer:mididriver:v1.24")
+    implementation(files(urlFile("https://github.com/billthefarmer/mididriver/releases/download/v1.29/MidiDriver-1.29.aar", "MidiDriver-1.29.aar")))
 }
