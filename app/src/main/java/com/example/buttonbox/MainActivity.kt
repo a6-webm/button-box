@@ -28,6 +28,8 @@ import java.util.OptionalInt
 class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener, InputManager.InputDeviceListener {
     var inputManager = getSystemService(INPUT_SERVICE) as InputManager
     var devices: List<InputDevice> = emptyList()
+    var selectedLeftDevice: InputDevice? = null
+    var selectedRightDevice: InputDevice? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +38,21 @@ class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener, InputM
         setContent {
             ButtonBoxTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    DeviceMenu("Select right-hand device", modifier = Modifier.padding(innerPadding))
-                    DeviceMenu("Select left-hand device", modifier = Modifier.padding(innerPadding))
-                } // TODO how do we make DeviceMenu update when devices does?
+                    DeviceMenu(
+                        "Select right-hand device",
+                        Modifier.padding(innerPadding),
+                        devices, // TODO does this recompose when changed? I assume not
+                        onSelectDeviceId = { selectedLeftDevice = it }
+                    )
+                    Text (selectedLeftDevice?.name ?: "No device selected")
+                    DeviceMenu(
+                        "Select left-hand device",
+                        Modifier.padding(innerPadding),
+                        devices,
+                        onSelectDeviceId = { selectedRightDevice = it }
+                    )
+                    Text (selectedRightDevice?.name ?: "No device selected")
+                }
             }
         }
     }
@@ -65,10 +79,12 @@ class MainActivity : ComponentActivity(), MidiDriver.OnMidiStartListener, InputM
 }
 
 @Composable
-fun DeviceMenu(text: String,  modifier: Modifier = Modifier) {
+fun DeviceMenu(
+    text: String, modifier: Modifier = Modifier, devices: List<InputDevice>,
+    onSelectDeviceId: (InputDevice) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedDeviceId by remember { mutableStateOf(OptionalInt::empty) }
-    val menuItemData = List(100) { "Option ${it + 1}" } // TODO needs to be devices
 
     Box(modifier) {
         OutlinedButton(onClick = { expanded = !expanded }) { Text(text) }
@@ -76,10 +92,10 @@ fun DeviceMenu(text: String,  modifier: Modifier = Modifier) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            menuItemData.forEach { option ->
+            devices.forEach { device ->
                 DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = { /* Do something... */ }
+                    text = { Text(device.name) },
+                    onClick = { onSelectDeviceId(device) }
                 )
             }
         }
